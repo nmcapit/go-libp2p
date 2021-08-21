@@ -38,8 +38,7 @@ var (
 	log = logging.Logger("p2p-holepunch")
 )
 
-// TODO Find a better name for this protocol.
-// HolePunchService is used to make direct connections with a peer via hole-punching.
+// The HolePunchService is used to make direct connections with a peer via hole-punching.
 type HolePunchService struct {
 	ctx       context.Context
 	ctxCancel context.CancelFunc
@@ -49,9 +48,7 @@ type HolePunchService struct {
 
 	tracer *Tracer
 
-	// ensure we shutdown ONLY once
-	closeSync sync.Once
-	refCount  sync.WaitGroup
+	refCount sync.WaitGroup
 
 	// active hole punches for deduplicating
 	activeMx sync.Mutex
@@ -93,11 +90,8 @@ func NewHolePunchService(h host.Host, ids *identify.IDService, opts ...Option) (
 
 // Close closes the Hole Punch Service.
 func (hs *HolePunchService) Close() error {
-	hs.closeSync.Do(func() {
-		hs.ctxCancel()
-		hs.refCount.Wait()
-	})
-
+	hs.ctxCancel()
+	hs.refCount.Wait()
 	return nil
 }
 
