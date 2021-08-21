@@ -117,13 +117,13 @@ func (hs *HolePunchService) HolePunch(rp peer.ID) error {
 			dt := time.Since(tstart)
 			cancel()
 
-			if err == nil {
-				hs.tracer.DirectDialSuccessful(rp, dt)
-				log.Debugf("direct connection to peer %s successful, no need for a hole punch", rp.Pretty())
-				return nil
+			if err != nil {
+				hs.tracer.DirectDialFailed(rp, dt, err)
+				break
 			}
-			hs.tracer.DirectDialFailed(rp, dt, err)
-			break
+			hs.tracer.DirectDialSuccessful(rp, dt)
+			log.Debugf("direct connection to peer %s successful, no need for a hole punch", rp.Pretty())
+			return nil
 		}
 	}
 
